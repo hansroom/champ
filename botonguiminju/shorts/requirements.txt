@@ -1,0 +1,5 @@
+# 보통의민주 쇼츠 파이프라인 의존성
+yt-dlp>=2025.1.1          # 지정 구간만 부분 다운로드
+imageio-ffmpeg>=0.5.1     # ffmpeg 바이너리 (시스템 ffmpeg 있으면 불필요)
+faster-whisper>=1.0.0     # 자동자막이 없을 때 STT 폴백 (선택)
+opencv-python-headless>=4.9  # --face-x auto 얼굴 추적 크롭 (선택)
