@@ -236,15 +236,16 @@ window.Mock = (function () {
   }
 
   /** 사용자가 임의 문자열로 채널을 추가했을 때(데모) 가상 채널 생성 */
-  function customChannel(query) {
+  function customChannel(query, knownTitle, knownHandle) {
     const r = rng('custom:' + query);
-    const name = query.replace(/^@/, '').replace(/^https?:\/\/\S*\/@?/, '') || '새 채널';
-    const preset = PRESETS[Math.floor(r() * PRESETS.length)];
+    const derived = String(query).replace(/^https?:\/\/\S*\/@?/, '').replace(/^@/, '');
+    const name = knownTitle || derived || '새 채널';
+    const preset = PRESETS[Math.floor(r() * 4)];
     const clone = {
       ...preset,
       id: 'UCdemo' + hash(query).toString(36).padStart(12, '0').slice(0, 12),
       title: name,
-      handle: '@' + name.toLowerCase().replace(/\s+/g, ''),
+      handle: knownHandle || ('@' + derived.toLowerCase().replace(/\s+/g, '')),
       subs: Math.round(between(r, 20000, 2200000))
     };
     PRESETS.push(clone);                                  // videosFor 에서 재사용

@@ -30,8 +30,10 @@ window.API = (function () {
 
   /* ── 입력 문자열 해석 ── */
   function parseInput(raw) {
-    const s = String(raw || '').trim();
+    let s = String(raw || '').trim();
     if (!s) return null;
+    /* 한글 핸들이 퍼센트 인코딩된 URL(@%EC%9D%B4...)도 인식하도록 디코딩 */
+    try { if (/%[0-9A-Fa-f]{2}/.test(s)) s = decodeURIComponent(s); } catch (_) { /* 원본 유지 */ }
 
     let m = s.match(/youtube\.com\/channel\/(UC[\w-]{20,})/i);
     if (m) return { type: 'id', value: m[1] };
@@ -86,7 +88,7 @@ window.API = (function () {
   }
 
   /* ── 채널 조회 ── */
-  async function resolveChannel(raw) {
+  async function resolveChannel(raw, knownTitle) {
     const parsed = parseInput(raw);
     if (!parsed) throw new Error('채널 주소를 입력해 주세요.');
 
@@ -94,7 +96,7 @@ window.API = (function () {
       const preset = Mock.channels().find(c =>
         c.handle.toLowerCase().includes(String(parsed.value).toLowerCase()) ||
         c.id === parsed.value || c.title === parsed.value);
-      return preset || Mock.customChannel(raw);
+      return preset || Mock.customChannel(raw, knownTitle, '@' + parsed.value);
     }
 
     const part = 'snippet,statistics,contentDetails';

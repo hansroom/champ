@@ -11,6 +11,7 @@
 scanner/
 ├── index.html            # 마크업 (헤더 · 사이드바 · 4개 탭 · 모달)
 ├── css/scanner.css       # Meta Design System 기반 Neutral 테마
+├── fonts/                # 카카오 큰 글씨체를 넣는 자리 (README · 내려받기 스크립트)
 └── js/
     ├── utils.js          # 포맷터 · 토큰화 · CSV · 토스트 등 공통 유틸
     ├── store.js          # localStorage 상태 저장소
@@ -33,11 +34,32 @@ Meta Design System의 공개 문서를 기준으로 **Neutral 테마**를 구성
 | --- | --- |
 | 팔레트 | 중립 그레이 램프 `--n-0` ~ `--n-950` (브랜드 컬러 대신 중립 강조) |
 | 상태색 | 증감 표현에만 사용 (`--positive` / `--negative` / `--warning`) |
-| 타이포 | Optimistic Display / Optimistic Text → Inter → Noto Sans KR 폴백 |
+| 타이포 | **카카오 큰 글씨체(Kakao Big Sans)** → Inter → Noto Sans KR → 시스템 폰트 폴백 |
 | 스페이싱 | 4px 배수 스케일 (4 · 8 · 12 · 16 · 24 · 32 · 48) |
 | 라운딩 | 4 / 8 / 12 / 16 / pill |
 | 토큰 | 시맨틱 네이밍 (`--surface-*`, `--text-*`, `--stroke-*`, `--action-*`) |
 | 테마 | neutral-light(기본) · neutral-dark (`[data-theme="dark"]`, 헤더에서 전환) |
+
+## 폰트 — 카카오 큰 글씨체
+
+본문·제목 모두 **카카오 큰 글씨체(Kakao Big Sans)** 를 기본 서체로 씁니다.
+Regular(400) · Bold(700) · ExtraBold(800) 세 굵기를 `@font-face` 로 선언해 두었습니다.
+
+폰트 바이너리는 저장소에 포함하지 않습니다. `scanner/fonts/` 에 아래 이름으로 넣으면
+자동 적용되고, 없으면 Inter → Noto Sans KR → 시스템 폰트로 폴백해 레이아웃은 그대로 유지됩니다.
+
+```
+KakaoBigSans-Regular.woff2     (또는 .ttf)
+KakaoBigSans-Bold.woff2        (또는 .ttf)
+KakaoBigSans-ExtraBold.woff2   (또는 .ttf)
+```
+
+받는 곳과 배치 방법은 [`fonts/README.md`](fonts/README.md) 를 참고하세요.
+공식 배포 페이지에서 받은 zip 은 다음 한 줄로 정리됩니다.
+
+```bash
+./fonts/download-fonts.sh ~/Downloads/KakaoBigSans.zip
+```
 
 ## 사용법
 
@@ -64,6 +86,21 @@ Meta Design System의 공개 문서를 기준으로 **Neutral 테마**를 구성
 - 그 외 문자열은 검색으로 대체 (할당량 100유닛 소모)
 
 **할당량**: 채널 1개당 약 `(수집 영상 수 ÷ 50) × 2 + 1` 유닛. 기본 일일 한도는 10,000유닛입니다.
+
+### 3. 추천 채널
+
+사이드바의 **추천 채널** 블록에서 아래 채널을 클릭 한 번으로 등록할 수 있습니다.
+(*모두 등록* 을 누르면 4개를 한 번에 추가하고 바로 스캔합니다.)
+
+| 채널 | 주소 |
+| --- | --- |
+| natv 국회방송 | <https://www.youtube.com/@NATV_korea> |
+| 이재명 | <https://www.youtube.com/@이재명tv> |
+| 델리민주 | <https://www.youtube.com/@dailyminjoo> |
+| KTV 국민방송 | <https://www.youtube.com/@KTV_korea> |
+
+이미 등록된 채널은 체크 표시와 함께 비활성화됩니다.
+데모 모드에서는 같은 이름의 가상 채널로, API 연결 상태에서는 실제 채널 데이터로 등록됩니다.
 
 ## 분석 항목
 

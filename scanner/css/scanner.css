@@ -2,11 +2,44 @@
    YouTube Channel Scanner — scanner.css
    Design language : Meta Design System — Neutral theme
    · Palette   : neutral gray ramp (n-0 → n-950), 브랜드 컬러 대신 중립 강조
-   · Type      : Optimistic Display / Optimistic Text → Inter fallback
+   · Type      : 카카오 큰 글씨체(Kakao Big Sans) → Inter → Noto Sans KR 폴백
    · Spacing   : 4px base scale (4 · 8 · 12 · 16 · 24 · 32 · 48)
    · Tokens    : semantic (surface / text / stroke / action / status)
    · Themes    : neutral-light (default) · neutral-dark ([data-theme="dark"])
 ================================================================ */
+
+/* ─────────────── WEBFONT · 카카오 큰 글씨체 ───────────────
+   fonts/ 폴더에 폰트 파일을 넣으면 자동 적용됩니다.
+   (없으면 Inter → Noto Sans KR → 시스템 폰트로 폴백)
+   내려받기: fonts/download-fonts.sh 또는 fonts/README.md 참고
+------------------------------------------------------------ */
+@font-face {
+  font-family: 'Kakao Big Sans';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: local('KakaoBigSans-Regular'), local('Kakao Big Sans Regular'),
+       url('../fonts/KakaoBigSans-Regular.woff2') format('woff2'),
+       url('../fonts/KakaoBigSans-Regular.ttf')   format('truetype');
+}
+@font-face {
+  font-family: 'Kakao Big Sans';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: local('KakaoBigSans-Bold'), local('Kakao Big Sans Bold'),
+       url('../fonts/KakaoBigSans-Bold.woff2') format('woff2'),
+       url('../fonts/KakaoBigSans-Bold.ttf')   format('truetype');
+}
+@font-face {
+  font-family: 'Kakao Big Sans';
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: local('KakaoBigSans-ExtraBold'), local('Kakao Big Sans ExtraBold'),
+       url('../fonts/KakaoBigSans-ExtraBold.woff2') format('woff2'),
+       url('../fonts/KakaoBigSans-ExtraBold.ttf')   format('truetype');
+}
 
 /* ─────────────── PRIMITIVES ─────────────── */
 :root {
@@ -42,9 +75,9 @@
   --sp-4: 16px; --sp-6: 24px; --sp-8: 32px; --sp-12: 48px;
 
   /* type */
-  --font-display: 'Optimistic Display', 'Inter', -apple-system, BlinkMacSystemFont,
+  --font-display: 'Kakao Big Sans', 'Inter', -apple-system, BlinkMacSystemFont,
                   'Segoe UI', 'Noto Sans KR', system-ui, sans-serif;
-  --font-text:    'Optimistic Text', 'Inter', -apple-system, BlinkMacSystemFont,
+  --font-text:    'Kakao Big Sans', 'Inter', -apple-system, BlinkMacSystemFont,
                   'Segoe UI', 'Noto Sans KR', system-ui, sans-serif;
 
   --dur: 160ms;
@@ -139,7 +172,8 @@ body {
   background: var(--surface-background);
   color: var(--text-primary);
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: -.005em;
   -webkit-font-smoothing: antialiased;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
@@ -287,6 +321,23 @@ select.input { cursor: pointer; appearance: none;
 .chitem__x { background: none; border: 0; color: var(--text-tertiary); cursor: pointer; font-size: 15px; padding: 4px 6px; border-radius: var(--radius-pill); line-height: 1; }
 .chitem__x:hover { background: var(--surface-pressed); color: var(--text-primary); }
 .chitem.is-empty { justify-content: center; color: var(--text-tertiary); font-size: 13px; padding: var(--sp-6) var(--sp-2); }
+
+/* ─────────────── 추천 채널 ─────────────── */
+.seedlist { list-style: none; display: flex; flex-direction: column; gap: var(--sp-1); }
+.seed {
+  display: flex; align-items: center; gap: var(--sp-2);
+  width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--font-text); font-size: 14px;
+  background: none; border: 1px solid var(--stroke-subtle);
+  border-radius: var(--radius-sm); padding: 8px 10px; color: var(--text-primary);
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.seed:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--stroke); }
+.seed:disabled { opacity: .5; cursor: default; }
+.seed__plus { color: var(--text-tertiary); font-weight: 700; flex-shrink: 0; }
+.seed__body { flex: 1; min-width: 0; }
+.seed__name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seed__handle { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ─────────────── MAIN / TABS ─────────────── */
 .main { padding: var(--sp-6); min-width: 0; }

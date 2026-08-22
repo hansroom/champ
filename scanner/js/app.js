@@ -10,6 +10,14 @@
     scanning: false
   };
 
+  /* ══════════ 추천 채널 프리셋 ══════════ */
+  const SEED_CHANNELS = [
+    { title: 'natv 국회방송',  url: 'https://www.youtube.com/@NATV_korea' },
+    { title: '이재명',         url: 'https://www.youtube.com/@%EC%9D%B4%EC%9E%AC%EB%AA%85tv' },
+    { title: '델리민주',       url: 'https://www.youtube.com/@dailyminjoo' },
+    { title: 'KTV 국민방송',   url: 'https://www.youtube.com/@KTV_korea' }
+  ].map(c => ({ ...c, handle: '@' + decodeURIComponent(c.url).split('/@')[1] }));
+
   /* ══════════ 초기화 ══════════ */
   document.addEventListener('DOMContentLoaded', () => {
     applyTheme(Store.get('theme'));
@@ -54,6 +62,7 @@
     App.videos = Analytics.enrich(raw, channels);
 
     UI.channelList(channels);
+    renderSeeds();
     UI.fillChannelSelects(channels);
     UI.fillVideoSelect(App.videos);
     UI.dashboard(Analytics.summary(channels, App.videos));
@@ -113,6 +122,48 @@
       label = '상위 이슈 영상 20%';
     }
     UI.patterns(target.length ? Analytics.patterns(target, pool) : null, label);
+  }
+
+  /* ══════════ 추천 채널 ══════════ */
+  function renderSeeds() {
+    const registered = Store.get('channels');
+    const isAdded = seed => registered.some(c =>
+      (c.handle || '').toLowerCase().replace(/^@/, '') === seed.handle.toLowerCase().replace(/^@/, '') ||
+      c.title === seed.title);
+
+    $('#seedList').innerHTML = SEED_CHANNELS.map((s, i) => {
+      const added = isAdded(s);
+      return `<li>
+        <button class="seed" type="button" data-seed="${i}" ${added ? 'disabled' : ''}>
+          <span class="seed__plus">${added ? '✓' : '+'}</span>
+          <span class="seed__body">
+            <span class="seed__name">${U.esc(s.title)}</span>
+            <span class="seed__handle">${U.esc(s.handle)}</span>
+          </span>
+        </button></li>`;
+    }).join('');
+
+    const remain = SEED_CHANNELS.filter(s => !isAdded(s)).length;
+    const all = $('#btnSeedAll');
+    all.disabled = remain === 0;
+    all.textContent = remain === 0 ? '등록 완료' : `모두 등록 (${remain})`;
+  }
+
+  async function addSeeds(seeds) {
+    const added = [];
+    for (const seed of seeds) {
+      try {
+        const ch = await API.resolveChannel(seed.url, seed.title);
+        if (Store.addChannel(ch)) added.push(ch);
+      } catch (e) {
+        U.toast(`${seed.title}: ${e.message}`, 'err');
+      }
+    }
+    recompute();
+    if (added.length) {
+      U.toast(`채널 ${added.length}개를 등록했습니다.`, 'ok');
+      await scanChannels(added);
+    }
   }
 
   /* ══════════ 채널 추가 ══════════ */
@@ -287,6 +338,20 @@
       Store.removeChannel(id);
       recompute();
       U.toast('채널을 삭제했습니다.');
+    });
+
+    /* 추천 채널 */
+    $('#seedList').addEventListener('click', e => {
+      const btn = e.target.closest('[data-seed]');
+      if (!btn || btn.disabled) return;
+      addSeeds([SEED_CHANNELS[Number(btn.dataset.seed)]]);
+    });
+    $('#btnSeedAll').addEventListener('click', () => {
+      const registered = Store.get('channels');
+      const remain = SEED_CHANNELS.filter(s => !registered.some(c =>
+        (c.handle || '').toLowerCase().replace(/^@/, '') === s.handle.toLowerCase().replace(/^@/, '') ||
+        c.title === s.title));
+      if (remain.length) addSeeds(remain);
     });
 
     $('#btnClearCh').addEventListener('click', () => {
