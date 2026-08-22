@@ -5,6 +5,21 @@
 
 `scanner/index.html` 을 브라우저로 열면 바로 동작합니다. (빌드 · 서버 불필요)
 
+## 배포 파일
+
+| 파일 | 설명 |
+| --- | --- |
+| `youtube-channel-scanner.html` | **단독 실행 파일.** CSS·JS가 모두 인라인된 한 개의 HTML — 다운로드해서 더블클릭하면 끝 |
+| `youtube-channel-scanner.zip` | 위 단독 파일 + 분리된 소스 전체 |
+
+단독 파일은 소스를 수정한 뒤 아래 명령으로 다시 만듭니다.
+
+```bash
+node scanner/build-standalone.js     # → youtube-channel-scanner.html
+```
+
+폰트를 함께 쓰려면 단독 HTML 과 같은 위치에 `fonts/` 폴더를 두면 됩니다.
+
 ## 파일 구조
 
 ```
@@ -12,6 +27,7 @@ scanner/
 ├── index.html            # 마크업 (헤더 · 사이드바 · 4개 탭 · 모달)
 ├── css/scanner.css       # Meta Design System 기반 Neutral 테마
 ├── fonts/                # 카카오 큰 글씨체를 넣는 자리 (README · 내려받기 스크립트)
+├── build-standalone.js   # 단독 실행 HTML 빌드 스크립트
 └── js/
     ├── utils.js          # 포맷터 · 토큰화 · CSV · 토스트 등 공통 유틸
     ├── store.js          # localStorage 상태 저장소
